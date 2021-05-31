@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: components/Table/Table.tsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: components/Table/Table.tsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import React from "react";
+import {
+  makeStyles,
+  useTheme,
+  Theme,
+  createStyles,
+} from "@material-ui/core/styles";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableFooter from "@material-ui/core/TableFooter";
+import TablePagination from "@material-ui/core/TablePagination";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
+import IconButton from "@material-ui/core/IconButton";
+import FirstPageIcon from "@material-ui/icons/FirstPage";
+import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
+import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import LastPageIcon from "@material-ui/icons/LastPage";
+import TableHead from "@material-ui/core/TableHead";
+import TableCell from "@material-ui/core/TableCell";
+import EditIcon from "@material-ui/icons/Edit";
+import Box from "@material-ui/core/Box";
+import DeleteIcon from "@material-ui/icons/Delete";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+import Link from "components/Link";
+
+const useStyles1 = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexShrink: 0,
+      marginLeft: theme.spacing(2.5),
+    },
+  })
+);
+
+interface TablePaginationActionsProps {
+  count: number;
+  page: number;
+  rowsPerPage: number;
+  onChangePage: (
+    event: React.MouseEvent&lt;HTMLButtonElement>,
+    newPage: number
+  ) => void;
+}
+
+function TablePaginationActions(props: TablePaginationActionsProps) {
+  const classes = useStyles1();
+  const theme = useTheme();
+  const { count, page, rowsPerPage, onChangePage } = props;
+
+  const handleFirstPageButtonClick = (
+    event: React.MouseEvent&lt;HTMLButtonElement>
+  ) => {
+    onChangePage(event, 0);
+  };
+
+  const handleBackButtonClick = (
+    event: React.MouseEvent&lt;HTMLButtonElement>
+  ) => {
+    onChangePage(event, page - 1);
+  };
+
+  const handleNextButtonClick = (
+    event: React.MouseEvent&lt;HTMLButtonElement>
+  ) => {
+    onChangePage(event, page + 1);
+  };
+
+  const handleLastPageButtonClick = (
+    event: React.MouseEvent&lt;HTMLButtonElement>
+  ) => {
+    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
+  };
+
+  return (
+    &lt;div className={classes.root}>
+      &lt;IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label="first page"
+      >
+        {theme.direction === "rtl" ? &lt;LastPageIcon /> : &lt;FirstPageIcon />}
+      &lt;/IconButton>
+      &lt;IconButton
+        onClick={handleBackButtonClick}
+        disabled={page === 0}
+        aria-label="previous page"
+      >
+        {theme.direction === "rtl" ? (
+          &lt;KeyboardArrowRight />
+        ) : (
+          &lt;KeyboardArrowLeft />
+        )}
+      &lt;/IconButton>
+      &lt;IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="next page"
+      >
+        {theme.direction === "rtl" ? (
+          &lt;KeyboardArrowLeft />
+        ) : (
+          &lt;KeyboardArrowRight />
+        )}
+      &lt;/IconButton>
+      &lt;IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
+        aria-label="last page"
+      >
+        {theme.direction === "rtl" ? &lt;FirstPageIcon /> : &lt;LastPageIcon />}
+      &lt;/IconButton>
+    &lt;/div>
+  );
+}
+
+const useStyles2 = makeStyles({
+  table: {
+    minWidth: 500,
+  },
+});
+
+interface Item {
+  id: string;
+  name: string;
+  localization: string;
+  price: number;
+}
+
+export interface TableProps {
+  rows: Item[];
+  onDeleteClick?: (itemId: string) => void;
+  onEditClick?: (itemId: string) => void;
+}
+
+/**
+ * @callback onDeleteClick
+ * @param {string} itemId - id punktu turystycznego
+ * @returns {void}
+ */
+/**
+ * @callback onEditClick
+ * @param {string} itemId - id punktu turystycznego
+ * @returns {void}
+ */
+/**
+ * @typedef {object} Item - interface pojedynczego itemu wyświetlanego w tabeli
+ * @property {string} id - id danego elementu
+ * @property {string} name - nazwa danego elementu
+ * @property {string} localization - lokalizacja danego elementu
+ * @property {number} price - cena wstępu na dany obiekt
+ */
+/**
+ * Komponent renderujący tabelę przedstawiającą punkty turystyczne
+ * @param {Item[]}  rows - prop otrzymujący dane, na podstawie których renderuje zawartość
+ * @param {onDeleteClick=}  onDeleteClick - funkcja uruchamiana przy kliknięciu na ikonę usunięcia - jeśli nie podano: nie wyrendruje się ikona
+ * @param {onEditClick=}  onEditClick - funkcja uruchamiana przy kliknięciu na ikonę edycji - jeśli nie podano: nie wyrendruje się ikona
+ * */
+function CustomTable({ rows, onDeleteClick, onEditClick }: TableProps) {
+  const classes = useStyles2();
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
+  const emptyRows =
+    rowsPerPage - Math.min(rowsPerPage, rows.length - page * rowsPerPage);
+
+  const handleChangePage = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent&lt;HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+
+  return (
+    &lt;TableContainer component={Paper}>
+      &lt;Table className={classes.table} aria-label="Punkty turystyczne">
+        &lt;TableHead>
+          &lt;TableRow>
+            &lt;TableCell>Nazwa&lt;/TableCell>
+            &lt;TableCell align="right">Lokalizacja&lt;/TableCell>
+            &lt;TableCell align="right">Cena (zł)&lt;/TableCell>
+            &lt;TableCell align="right">Akcje&lt;/TableCell>
+          &lt;/TableRow>
+        &lt;/TableHead>
+        &lt;TableBody>
+          {(rowsPerPage > 0
+            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            : rows
+          ).map((row) => (
+            &lt;TableRow key={row.id}>
+              &lt;TableCell component="th" scope="row">
+                {row.name}
+              &lt;/TableCell>
+              &lt;TableCell style={{ width: 160 }} align="right">
+                {row.localization}
+              &lt;/TableCell>
+              &lt;TableCell style={{ width: 160 }} align="right">
+                {row.price}
+              &lt;/TableCell>
+
+              &lt;TableCell style={{ width: 160 }} align="right">
+                &lt;Box
+                  display="flex"
+                  justifyContent="flex-end"
+                  alignItems="center"
+                >
+                  &lt;Link href={`/item/${row.id}`}>
+                    &lt;VisibilityIcon />
+                  &lt;/Link>
+
+                  {onEditClick &amp;&amp; onDeleteClick &amp;&amp; (
+                    &lt;>
+                      &lt;IconButton onClick={() => onEditClick(row.id)}>
+                        &lt;EditIcon />
+                      &lt;/IconButton>
+
+                      &lt;IconButton onClick={() => onDeleteClick(row.id)}>
+                        &lt;DeleteIcon />
+                      &lt;/IconButton>
+                    &lt;/>
+                  )}
+                &lt;/Box>
+              &lt;/TableCell>
+            &lt;/TableRow>
+          ))}
+          {emptyRows > 0 &amp;&amp; (
+            &lt;TableRow style={{ height: 53 * emptyRows }}>
+              &lt;TableCell colSpan={6} />
+            &lt;/TableRow>
+          )}
+        &lt;/TableBody>
+        &lt;TableFooter>
+          &lt;TableRow>
+            &lt;TablePagination
+              rowsPerPageOptions={[5, 10, 25, { label: "All", value: -1 }]}
+              colSpan={3}
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              SelectProps={{
+                inputProps: { "aria-label": "rows per page" },
+                native: true,
+              }}
+              onChangePage={(_, newPage: number) => handleChangePage(newPage)}
+              onChangeRowsPerPage={handleChangeRowsPerPage}
+              ActionsComponent={TablePaginationActions}
+            />
+          &lt;/TableRow>
+        &lt;/TableFooter>
+      &lt;/Table>
+    &lt;/TableContainer>
+  );
+}
+export default CustomTable;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#APIUrl">APIUrl</a></li><li><a href="global.html#CmsLayout">CmsLayout</a></li><li><a href="global.html#CmsWrapper">CmsWrapper</a></li><li><a href="global.html#ColoredIconWrapper">ColoredIconWrapper</a></li><li><a href="global.html#CustomTable">CustomTable</a></li><li><a href="global.html#FormikTextField">FormikTextField</a></li><li><a href="global.html#getToken">getToken</a></li><li><a href="global.html#globalStyles">globalStyles</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#removeToken">removeToken</a></li><li><a href="global.html#saveToken">saveToken</a></li><li><a href="global.html#Search">Search</a></li><li><a href="global.html#theme">theme</a></li><li><a href="global.html#TouristPointForm">TouristPointForm</a></li><li><a href="global.html#useNotistackStyles">useNotistackStyles</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed May 26 2021 20:33:34 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

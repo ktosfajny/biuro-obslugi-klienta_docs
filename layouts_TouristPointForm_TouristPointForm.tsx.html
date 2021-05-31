@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: layouts/TouristPointForm/TouristPointForm.tsx</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: layouts/TouristPointForm/TouristPointForm.tsx</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { Formik, FormikHelpers, Form } from "formik";
+import yup from "common/yup";
+import TextField from "components/formik/TextField";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
+import DayHoursTextField from "./DayHoursTextField";
+
+export interface IWeekOpenHours {
+  monday: string;
+  tuesday: string;
+  wednesday: string;
+  thursday: string;
+  friday: string;
+  saturday: string;
+  sunday: string;
+}
+
+export interface InitialValues {
+  name: string;
+  localization: string;
+  price: number | "";
+  rating: number | "";
+  phone: number | "";
+  description: string;
+  openHours: IWeekOpenHours;
+  imageSRC: string;
+}
+
+const loginFormValidationSchema = yup.object({
+  name: yup.string().required(),
+  localization: yup.string().required(),
+  price: yup.number().required(),
+  rating: yup.number().max(5).required(),
+  phone: yup.number().required(),
+  description: yup.string().required(),
+  openHours: yup.object({
+    monday: yup.string().required(),
+    tuesday: yup.string().required(),
+    wednesday: yup.string().required(),
+    thursday: yup.string().required(),
+    friday: yup.string().required(),
+    saturday: yup.string().required(),
+    sunday: yup.string().required(),
+  }),
+  imageSRC: yup.string().required(),
+});
+
+export interface TouristPointFormProps {
+  onSubmit: (
+    values: InitialValues,
+    actions: FormikHelpers&lt;InitialValues>
+  ) => void;
+  initialValues: InitialValues;
+  actionBtnLabel?: string;
+}
+
+/**
+ * @typedef {object} IWeekOpenHours - struktura danych formularza
+ * @property {string} monday - godziny otwarcia w poniedziałek
+ * @property {string} tuesday - godziny otwarcia we wtorek
+ * @property {string} wednesday - godziny otwarcia w środę
+ * @property {string} thursday - godziny otwarcia w czwartek
+ * @property {string} friday - godziny otwarcia w piątek
+ * @property {string} saturday - godziny otwarcia w sobotę
+ * @property {string} sunday - godziny otwarcia w niedzielę
+ */
+
+/**
+ * @typedef {object} InitialValues - struktura danych formularza
+ * @property {string} name - nazwa punktu
+ * @property {string} localization - lokalizacja punktu
+ * @property {number | ""} price -cena wstępu na dany obiekt
+ * @property {number | ""} rating - ocena obiektu
+ * @property {number | ""} phone - telefon kontaktowy do punktu turystycznego
+ * @property {string} description - opis punktu turystycznego
+ * @property {IWeekOpenHours} openHours - obiekt zawierający godziny wstepu na dany obiekt turystyczny
+ * @property {string} imageSRC - link do poglądowego zdjęcia
+ */
+
+/**
+ * @callback onSubmit
+ * @param {InitialValues} values - struktura danych uzupełnionych w formularzu
+ * @param {FormikHelpers&lt;InitialValues>} actions - obiekt akcji z biblioteki Formik
+ * @returns {void}
+ */
+
+/**
+ * Komponent renderujący formularz dodawania/edycji punktu turystycznego
+ * @param {onSubmit}  onSubmit - funkcja uruchamiana podczas submitowania formularza
+ * @param {TableProps} initialValues - dane uzupełnione przez użytkownika w formularzu
+ * @param {string} actionBtnLabel - napis wyświetlany na przycisku obsługującym formularz
+ * */
+const TouristPointForm = ({
+  onSubmit,
+  initialValues,
+  actionBtnLabel = "Dodaj",
+}: TouristPointFormProps) => {
+  return (
+    &lt;Formik
+      initialValues={initialValues}
+      onSubmit={onSubmit}
+      validationSchema={loginFormValidationSchema}
+    >
+      &lt;Form>
+        &lt;Box mb={4}>
+          &lt;TextField type="text" name="name" label="Nazwa" fullWidth />
+          &lt;TextField
+            type="text"
+            name="localization"
+            label="Lokalizacja"
+            fullWidth
+          />
+          &lt;TextField type="number" name="price" label="Cena" fullWidth />
+          &lt;TextField type="number" name="rating" label="Ocena" fullWidth />
+          &lt;TextField type="number" name="phone" label="Tel" fullWidth />
+          &lt;TextField type="text" name="description" label="Opis" fullWidth />
+          &lt;TextField
+            type="text"
+            name="imageSRC"
+            label="Link do zdjęcia"
+            fullWidth
+          />
+
+          &lt;Box mb={4} mt={2}>
+            &lt;Typography color="textSecondary">Godziny otwarcia:&lt;/Typography>
+            &lt;DayHoursTextField
+              type="string"
+              name="openHours.monday"
+              label="Poniedziałek"
+            />
+            &lt;DayHoursTextField
+              type="string"
+              name="openHours.tuesday"
+              label="Wtorek"
+            />
+            &lt;DayHoursTextField
+              type="string"
+              name="openHours.wednesday"
+              label="Środa"
+            />
+            &lt;DayHoursTextField
+              type="string"
+              name="openHours.thursday"
+              label="Czwartek"
+            />
+            &lt;DayHoursTextField
+              type="string"
+              name="openHours.friday"
+              label="Piątek"
+            />
+            &lt;DayHoursTextField
+              type="string"
+              name="openHours.saturday"
+              label="Sobota"
+            />
+            &lt;DayHoursTextField
+              type="string"
+              name="openHours.sunday"
+              label="Niedziela"
+            />
+          &lt;/Box>
+        &lt;/Box>
+
+        &lt;Box mb={4} display="flex" justifyContent="flex-end">
+          &lt;Button variant="contained" color="primary" type="submit">
+            {actionBtnLabel}
+          &lt;/Button>
+        &lt;/Box>
+      &lt;/Form>
+    &lt;/Formik>
+  );
+};
+
+export default TouristPointForm;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Global</h3><ul><li><a href="global.html#APIUrl">APIUrl</a></li><li><a href="global.html#CmsLayout">CmsLayout</a></li><li><a href="global.html#CmsWrapper">CmsWrapper</a></li><li><a href="global.html#ColoredIconWrapper">ColoredIconWrapper</a></li><li><a href="global.html#CustomTable">CustomTable</a></li><li><a href="global.html#FormikTextField">FormikTextField</a></li><li><a href="global.html#getToken">getToken</a></li><li><a href="global.html#globalStyles">globalStyles</a></li><li><a href="global.html#Login">Login</a></li><li><a href="global.html#NavBar">NavBar</a></li><li><a href="global.html#removeToken">removeToken</a></li><li><a href="global.html#saveToken">saveToken</a></li><li><a href="global.html#Search">Search</a></li><li><a href="global.html#theme">theme</a></li><li><a href="global.html#TouristPointForm">TouristPointForm</a></li><li><a href="global.html#useNotistackStyles">useNotistackStyles</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.7</a> on Wed May 26 2021 20:33:34 GMT+0200 (GMT+02:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
